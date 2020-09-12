@@ -25,7 +25,7 @@ export default class Table extends Component {
     componentDidMount() {
         const {getResource} = this.Sevice;
 
-        getResource()
+        getResource(1)
             .then(data => this.setState({data}))
             .catch(() => this.setState({error: true}))
             .finally(() => this.setState({loading: false}));
@@ -83,6 +83,27 @@ export default class Table extends Component {
                 
     }
 
+    splittingDataIntoPages = (arr, num) => {
+        let newArr = [],
+            wrapArr = [],
+            x = 0;
+        arr.forEach((obj, i)=> {
+            if (x < 49) {
+                x++;
+                newArr = [...newArr, obj];
+
+                if (i >= arr.length - 1) {
+                    wrapArr= [...wrapArr, newArr];
+                }
+            } else if (x >= 49) {
+                x = 0
+                wrapArr= [...wrapArr, newArr];
+                newArr = [];
+            }
+        })
+        return wrapArr[num];
+    }
+
     listRender = (arr) => {
         return arr.map((obj, i) => {
             return <List key={i} data={obj} />;
@@ -92,7 +113,8 @@ export default class Table extends Component {
     render() {
         const {data, loading, error} = this.state;
 
-        const content = error ? <Error /> : loading ? <Spinner/> : this.listRender(data);
+        const content = error ? <Error /> : 
+                        loading ? <Spinner/> : this.listRender(this.splittingDataIntoPages(data, 0));
 
         return ( 
             <div className="container">
