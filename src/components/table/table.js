@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import Servise from '../../service';
 import List from '../list';
 import Header from '../header';
+import Spinner from '../spinner';
+import Error from '../error';
 
 import './table.scss'
 
@@ -10,24 +12,23 @@ export default class Table extends Component {
     Sevice = new Servise();
     state = {
         data: [],
+        loading: true,
+        error: false,
+
         sortId: true,
         sortFirst: true,
         sortLast: true,
         sortEmail: true,
-        sortPhone: true,
+        sortPhone: true
     }
 
     componentDidMount() {
-        const {getResource} = this.Sevice
+        const {getResource} = this.Sevice;
 
         getResource()
-            .then(this.changeStateData);
-    }
-
-    changeStateData = (res) => {
-        this.setState(data => ({
-            data: [...res]
-        }));
+            .then(data => this.setState({data}))
+            .catch(() => this.setState({error: true}))
+            .finally(() => this.setState({loading: false}));
     }
 
     sortingObjects = (data, column, sort) => {
@@ -89,9 +90,9 @@ export default class Table extends Component {
     }
 
     render() {
-        const {data} = this.state;
+        const {data, loading, error} = this.state;
 
-        const content = this.listRender(data);
+        const content = error ? <Error /> : loading ? <Spinner/> : this.listRender(data);
 
         return ( 
             <div className="container">
