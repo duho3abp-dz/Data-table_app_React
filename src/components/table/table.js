@@ -12,6 +12,7 @@ export default class Table extends Component {
     Sevice = new Servise();
     state = {
         data: [],
+        page: 0,
         loading: true,
         error: false,
 
@@ -111,16 +112,18 @@ export default class Table extends Component {
     }
 
     render() {
-        const {data, loading, error} = this.state;
+        const {data, loading, error, page} = this.state;
 
         const content = error ? <Error /> : 
-                        loading ? <Spinner/> : this.listRender(this.splittingDataIntoPages(data, 0));
+                        loading ? <Spinner/> : this.listRender(this.splittingDataIntoPages(data, page));
 
-        return ( 
+        return (<>
             <div className="container">
                 <Header columnSorting={this.columnSorting} />
                 {content}
             </div>
-        );
+            <div className="leftBtn"></div>
+            <div className="reightBtn"></div>
+        </>);
     }   
 }
