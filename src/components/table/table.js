@@ -165,7 +165,7 @@ export default class Table extends Component {
 
         return (<>
             <div className="container">
-                <Header columnSorting={this.columnSorting} />
+                <Header information={this.state} columnSorting={this.columnSorting} />
                 {content}
             </div>
             <div onClick={() => this.changePage('prev')} className="fixed__btn-prev"><img src={svg} alt="button"></img></div>

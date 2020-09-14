@@ -1,7 +1,18 @@
 .table__header {
+    position: relative;
     cursor: pointer;
 
     &:hover {
         font-weight: 600;
+    }
+}
+
+.header {
+    &__id, &__first, &__last, &__email, &__phone {
+        position: absolute;
+        width: 5%;
+        top: 50%;
+        left: 15%;
+        transform: translateY(-50%);
     }
 }
