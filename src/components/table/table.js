@@ -6,15 +6,18 @@ import Header from '../header';
 import Spinner from '../spinner';
 import Error from '../error';
 
-import './table.scss'
+import './table.scss';
+import svg from './button.svg';
 
 export default class Table extends Component {
     Sevice = new Servise();
     state = {
         data: [],
         page: 0,
+        totalPages: 0,
         loading: true,
         error: false,
+        stringsTarget: 49,
 
         sortId: true,
         sortFirst: true,
@@ -27,9 +30,17 @@ export default class Table extends Component {
         const {getResource} = this.Sevice;
 
         getResource(1)
-            .then(data => this.setState({data}))
+            .then(data => {
+                this.setState({data});
+                this.setAllPages(data);
+            })
             .catch(() => this.setState({error: true}))
             .finally(() => this.setState({loading: false}));
+    }
+
+    setAllPages = (data) => {
+        const allPages = Math.ceil(data.length / (this.state.stringsTarget + 1));
+        this.setState({totalPages: allPages});
     }
 
     sortingObjects = (data, column, sort) => {
@@ -84,25 +95,57 @@ export default class Table extends Component {
                 
     }
 
-    splittingDataIntoPages = (arr, num) => {
+    splittingDataIntoPages = (arr, page) => {
+        const {stringsTarget} = this.state;
         let newArr = [],
             wrapArr = [],
             x = 0;
+
         arr.forEach((obj, i)=> {
-            if (x < 49) {
+            if (x < stringsTarget) {
                 x++;
                 newArr = [...newArr, obj];
 
                 if (i >= arr.length - 1) {
                     wrapArr= [...wrapArr, newArr];
                 }
-            } else if (x >= 49) {
+            } else if (x >= stringsTarget) {
                 x = 0
                 wrapArr= [...wrapArr, newArr];
                 newArr = [];
             }
         })
-        return wrapArr[num];
+
+        return wrapArr[page];
+    }
+
+    changePage = (route) => {
+        const {data, page, totalPages} = this.state;
+
+        if (data.length) {
+            switch (route) {
+                case 'next':
+                    const nextPage = page + 1;
+                    if (nextPage >= totalPages) {
+                        this.setState({page: 0});
+                    } else {
+                        this.setState({page: nextPage});
+                    }
+                    break;
+    
+                case 'prev':
+                    const prevPage = page - 1;
+                    if (prevPage < 0) {
+                        this.setState({page: totalPages - 1});
+                    } else {
+                        this.setState({page: prevPage});
+                    }
+                    break;
+            
+                default:
+                    break;
+            }
+        }
     }
 
     listRender = (arr) => {
@@ -112,18 +155,22 @@ export default class Table extends Component {
     }
 
     render() {
-        const {data, loading, error, page} = this.state;
+        const {data, loading, error, page, totalPages} = this.state;
 
         const content = error ? <Error /> : 
-                        loading ? <Spinner/> : this.listRender(this.splittingDataIntoPages(data, page));
+                        loading ? <Spinner/> : this.listRender(this.splittingDataIntoPages(data, page)) ;
+
+        const numPage = page < 9 ? `0${page + 1}` : page + 1 ;
+        const totalNumPage = !totalPages ? '01' : totalPages < 10 ? `0${totalPages}` : totalPages;
 
         return (<>
             <div className="container">
                 <Header columnSorting={this.columnSorting} />
                 {content}
             </div>
-            <div className="leftBtn"></div>
-            <div className="reightBtn"></div>
+            <div onClick={() => this.changePage('prev')} className="fixed__btn-prev"><img src={svg} alt="button"></img></div>
+            <div onClick={() => this.changePage('next')} className="fixed__btn-next"><img src={svg} alt="button"></img></div>
+            <div className="fixed__counter">{numPage}/{totalNumPage}</div>
         </>);
     }   
 }
