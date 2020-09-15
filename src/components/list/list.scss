@@ -3,6 +3,10 @@
         width: 100%;
         display: flex;
         justify-content: center;
+        cursor: pointer;
+        &-hover:hover div {
+            background: rgb(216, 215, 215);
+        }
     }
     &__list {
         width: 19%;
@@ -13,5 +17,25 @@
         align-items: center;
         overflow: hidden;
         font-size: 16px;
+    }
+}
+.adress {
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 18px;
+    &__block {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 95%;
+        border: solid #000000 1px;
+        & span {
+            font-weight: 600;
+        }
+    }
+    &__list {
+        margin: 2px;   
     }
 }
