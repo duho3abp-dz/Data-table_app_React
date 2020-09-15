@@ -2,36 +2,3 @@
     width: 90%;
     margin: 50px auto;
 }
-
-.fixed {
-    &__btn {
-        &-prev, &-next {
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 4%;
-            cursor: pointer;
-        }
-        &-prev {
-            left: 3%;
-            transform: translateY(-50%) rotate(-180deg);
-        }
-        &-next {
-            right: 3%;
-        }
-    }
-    &__counter {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        bottom: -2px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100px;
-        height: 40px;
-        background: rgb(236, 235, 235);
-        border: solid #000 2px;
-        font-size: 20px;
-    }
-}

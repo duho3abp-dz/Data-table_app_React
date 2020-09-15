@@ -14,7 +14,7 @@ export default class Search extends Component {
                     onChange={changeTerm}
                     value={term}
                 />
-                <button onClick={searchTerm} className="search__btn">Find</button>
+                <button onClick={searchTerm} className="search__btn">search</button>
             </div>
         );
     }

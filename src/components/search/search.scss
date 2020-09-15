@@ -12,16 +12,18 @@
     z-index: 10;
     &__input, &__btn {
         border-radius: 0;
-        border: solid #000 1px;
+        border: solid #000 2px;
         margin-left: 5px;
         outline: none;
     }
     &__input {
+        font-size: 16px;
         width: 60%;
-        height: 20px;
+        height: 25px;
+        background: rgb(251, 251, 251);
     }
     &__btn {
-        padding: 2px 10px;
+        font-size: 16px;
         cursor: pointer;
     }
 }

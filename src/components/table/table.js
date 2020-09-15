@@ -6,9 +6,9 @@ import Header from '../header';
 import Spinner from '../spinner';
 import Error from '../error';
 import Search from '../search';
+import Slider from '../slider';
 
 import './table.scss';
-import svg from './button.svg';
 
 export default class Table extends Component {
     Sevice = new Servise();
@@ -119,7 +119,7 @@ export default class Table extends Component {
             const filterArr = data.filter(obj => {
                 let ok = false;
                 for (let key in obj) {
-                    if (key !== 'address') {
+                    if (key !== 'address' && key !== 'description') {
                         if (obj[key].indexOf(term) > -1) {
                             ok = true;
                         }
@@ -210,9 +210,7 @@ export default class Table extends Component {
     render() {
         const {data, filter, loading, error, page, totalPages, term} = this.state;
 
-        const content = error ? <Error /> : 
-                        loading ? <Spinner/> : this.listRender(this.splittingDataIntoPages(data, page, filter));
-
+        const content = error ? <Error /> : loading ? <Spinner/> : this.listRender(this.splittingDataIntoPages(data, page, filter));
         const numPage = page < 9 ? `0${page + 1}` : page + 1 ;
         const totalNumPage = !totalPages ? '01' : totalPages < 10 ? `0${totalPages}` : totalPages;
 
@@ -226,15 +224,11 @@ export default class Table extends Component {
                 <Header information={this.state} columnSorting={this.columnSorting} />
                 {content}
             </div>
-
-            <div onClick={() => this.changePage('prev')} className="fixed__btn-prev">
-                <img src={svg} alt="button"></img>
-            </div>
-            <div onClick={() => this.changePage('next')} className="fixed__btn-next">
-                <img src={svg} alt="button"></img>
-            </div>
-
-            <div className="fixed__counter">{numPage}/{totalNumPage}</div>
+            <Slider 
+                changePage={this.changePage}
+                numPage={numPage}
+                totalNumPage={totalNumPage}
+            />
         </>);
     }   
 }
