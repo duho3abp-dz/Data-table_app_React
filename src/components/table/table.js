@@ -5,6 +5,7 @@ import List from '../list';
 import Header from '../header';
 import Spinner from '../spinner';
 import Error from '../error';
+import Search from '../search';
 
 import './table.scss';
 import svg from './button.svg';
@@ -13,11 +14,13 @@ export default class Table extends Component {
     Sevice = new Servise();
     state = {
         data: [],
+        filter: [],
         page: 0,
         totalPages: 0,
         loading: true,
         error: false,
         stringsTarget: 49,
+        term: '',
 
         sortId: true,
         sortFirst: true,
@@ -26,25 +29,34 @@ export default class Table extends Component {
         sortPhone: true
     }
 
+    // --------------------LOGIC-------------------- //
+
     componentDidMount() {
         const {getResource} = this.Sevice;
 
         getResource(1)
             .then(data => {
-                this.setState({data});
+                this.setData(data);
                 this.setAllPages(data);
             })
             .catch(() => this.setState({error: true}))
             .finally(() => this.setState({loading: false}));
     }
 
-    setAllPages = (data) => {
-        const allPages = Math.ceil(data.length / (this.state.stringsTarget + 1));
-        this.setState({totalPages: allPages});
-    }
+    setData = (data) => {
+        const newData = data.map(obj => {
+            obj.id = obj.id + '';
+            return obj;
+        })
+        this.setState({data: newData});
+    };
 
-    sortingObjects = (data, column, sort) => {
-        const arr = data.sort((a, b) => {
+    // *** Sorting *** //
+    sortingObjects = (column, sort) => {
+        const {data, filter} = this.state;
+        const filterArr = filter.length !== 0 ? filter : data ;
+
+        const arr = filterArr.sort((a, b) => {
             if (a[column] > b[column]) {
                 return sort ? 1 : -1 ;
                 
@@ -54,12 +66,16 @@ export default class Table extends Component {
             }
             return 0;
         });
-        this.setState({ data: [...arr] });
-    }
+
+        if (filter.length !== 0) {
+            this.setState({ filter: [...arr] });    
+        } else {
+            this.setState({ data: [...arr] });
+        }
+    };
 
     columnSorting = (column) => {
         const {
-            data, 
             sortId, 
             sortFirst,
             sortLast,
@@ -69,44 +85,79 @@ export default class Table extends Component {
 
         switch (column) {
             case 'id':
-                this.sortingObjects(data, column, sortId)
+                this.sortingObjects(column, sortId)
                 this.setState({ sortId: !sortId });    
                 break;
             case 'firstName':
-                this.sortingObjects(data, column, sortFirst)
+                this.sortingObjects(column, sortFirst)
                 this.setState({ sortFirst: !sortFirst });    
                 break;
             case 'lastName':
-                this.sortingObjects(data, column, sortLast)
+                this.sortingObjects(column, sortLast)
                 this.setState({ sortLast: !sortLast });    
                 break;
             case 'email':
-                this.sortingObjects(data, column, sortEmail)
+                this.sortingObjects(column, sortEmail)
                 this.setState({ sortEmail: !sortEmail });    
                 break;
             case 'phone':
-                this.sortingObjects(data, column, sortPhone)
+                this.sortingObjects(column, sortPhone)
                 this.setState({ sortPhone: !sortPhone });    
                 break;
 
             default:
                 break;
-        }
-                
-    }
+        }          
+    };
 
-    splittingDataIntoPages = (arr, page) => {
+    // *** Search *** //
+    changeSearchTermState = (e) => this.setState({term: e.target.value});
+
+    searchTerm = () => {
+        const {data, term} = this.state;
+        if (term.length !== 0) {
+            const filterArr = data.filter(obj => {
+                let ok = false;
+                for (let key in obj) {
+                    if (key !== 'address') {
+                        if (obj[key].indexOf(term) > -1) {
+                            ok = true;
+                        }
+                    }
+                }
+                if (ok) {
+                    return obj;
+                } else {
+                    return null;
+                }
+            });
+            this.setState({filter: filterArr});
+            this.setAllPages(filterArr);
+        } else {
+            this.setState({filter: ''});
+            this.setAllPages(data);
+        }
+    };
+
+    // *** Slider *** //
+    setAllPages = (data) => {
+        const allPages = Math.ceil(data.length / (this.state.stringsTarget + 1));
+        this.setState({totalPages: allPages});
+    };
+
+    splittingDataIntoPages = (arr, page, filter) => {
         const {stringsTarget} = this.state;
+        const filterArr = filter.length !== 0 ? filter : arr ;
         let newArr = [],
             wrapArr = [],
             x = 0;
 
-        arr.forEach((obj, i)=> {
+        filterArr.forEach((obj, i)=> {
             if (x < stringsTarget) {
                 x++;
                 newArr = [...newArr, obj];
 
-                if (i >= arr.length - 1) {
+                if (i >= filterArr.length - 1) {
                     wrapArr= [...wrapArr, newArr];
                 }
             } else if (x >= stringsTarget) {
@@ -117,7 +168,7 @@ export default class Table extends Component {
         })
 
         return wrapArr[page];
-    }
+    };
 
     changePage = (route) => {
         const {data, page, totalPages} = this.state;
@@ -146,30 +197,43 @@ export default class Table extends Component {
                     break;
             }
         }
-    }
+    };
+
+    // --------------------RENDER-------------------- //
 
     listRender = (arr) => {
         return arr.map((obj, i) => {
             return <List key={i} data={obj} />;
         });
-    }
+    };
 
     render() {
-        const {data, loading, error, page, totalPages} = this.state;
+        const {data, filter, loading, error, page, totalPages, term} = this.state;
 
         const content = error ? <Error /> : 
-                        loading ? <Spinner/> : this.listRender(this.splittingDataIntoPages(data, page)) ;
+                        loading ? <Spinner/> : this.listRender(this.splittingDataIntoPages(data, page, filter));
 
         const numPage = page < 9 ? `0${page + 1}` : page + 1 ;
         const totalNumPage = !totalPages ? '01' : totalPages < 10 ? `0${totalPages}` : totalPages;
 
         return (<>
+            <Search 
+                changeTerm={this.changeSearchTermState} 
+                searchTerm={this.searchTerm}
+                term={term}
+            />
             <div className="container">
                 <Header information={this.state} columnSorting={this.columnSorting} />
                 {content}
             </div>
-            <div onClick={() => this.changePage('prev')} className="fixed__btn-prev"><img src={svg} alt="button"></img></div>
-            <div onClick={() => this.changePage('next')} className="fixed__btn-next"><img src={svg} alt="button"></img></div>
+
+            <div onClick={() => this.changePage('prev')} className="fixed__btn-prev">
+                <img src={svg} alt="button"></img>
+            </div>
+            <div onClick={() => this.changePage('next')} className="fixed__btn-next">
+                <img src={svg} alt="button"></img>
+            </div>
+
             <div className="fixed__counter">{numPage}/{totalNumPage}</div>
         </>);
     }   
