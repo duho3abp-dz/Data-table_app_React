@@ -1,0 +1,35 @@
+.start {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    &__title {
+        font-size: 50px;
+        font-weight: 800;
+    }
+    &__content {
+        width: 50%;
+        border-bottom: solid #000000 2px;
+        & h2 {
+            text-align: center;
+        }
+        & p {
+            max-height: 350px;
+            overflow: auto;
+        }
+    }
+    &__select {
+        & button {
+            font-size: 25px;
+            font-weight: 800;
+            margin: 0 20px;
+            border-radius: 0;
+            border: solid #000 2px;
+            outline: none;
+            cursor: pointer;
+        }
+    }
+}

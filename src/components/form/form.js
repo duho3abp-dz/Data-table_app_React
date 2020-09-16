@@ -22,6 +22,8 @@ export default class Form extends Component {
         }
     }
 
+    // --------------------LOGIC-------------------- //
+
     openClosePop = () => {
         const {formOpen} = this.props;
         const {height} = this.state;
@@ -111,6 +113,8 @@ export default class Form extends Component {
             }
         })
     };
+
+    // --------------------RENDER-------------------- //
 
     render() {
         const {height, submit} = this.state;

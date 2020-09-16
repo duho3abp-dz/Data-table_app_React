@@ -34,9 +34,10 @@ export default class Table extends Component {
     // --------------------LOGIC-------------------- //
 
     componentDidMount() {
+        const {amountData} = this.props;
         const {getResource} = this.Sevice;
 
-        getResource()
+        getResource(amountData)
             .then(data => {
                 this.setState({data,
                     formOpen: true
@@ -212,29 +213,30 @@ export default class Table extends Component {
         });
     };
 
-    render() {
+    renderApp = () => {
         const {data, filter, loading, error, page, totalPages, term, formOpen} = this.state;
 
         const content = error ? <Error /> : loading ? <Spinner/> : this.listRender(this.splittingDataIntoPages(data, page, filter));
         const numPage = page < 9 ? `0${page + 1}` : page + 1 ;
         const totalNumPage = !totalPages ? '01' : totalPages < 10 ? `0${totalPages}` : totalPages;
-
+        const slider = totalPages > 1 ? <Slider changePage={this.changePage} numPage={numPage} totalNumPage={totalNumPage} /> : null ;
+        
         return (<>
-            <Search 
-                changeTerm={this.changeSearchTermState} 
-                searchTerm={this.searchTerm}
-                term={term}
-            />
             <div className="container">
-                <Form addNewContact={this.addNewContact} formOpen={formOpen} />
-                <Header information={this.state} columnSorting={this.columnSorting} />
-                {content}
+                <Form addNewContact={ this.addNewContact } formOpen={ formOpen } />
+                <Header information={ this.state } columnSorting={ this.columnSorting } />
+                { content }
             </div>
-            <Slider 
-                changePage={this.changePage}
-                numPage={numPage}
-                totalNumPage={totalNumPage}
+            <Search 
+                changeTerm={ this.changeSearchTermState } 
+                searchTerm={ this.searchTerm }
+                term={ term }
             />
+            { slider }
         </>);
+    }
+
+    render() {
+        return this.renderApp();
     }   
 }

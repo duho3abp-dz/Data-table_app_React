@@ -1,13 +1,30 @@
 import React, { Component } from 'react';
 
+import Start from '../start';
 import Table from '../table';
 import './app.scss'
 
 export default class App extends Component {
+    state = {
+        amountData: 0,
+        openApp: false
+    }
+
+    setAmountData = (select) => {
+        this.setState({
+            amountData: select,
+            openApp: true
+        });
+    }
+
     render() {
+        const {amountData, openApp} = this.state;
+
+        const content = openApp ? <Table  amountData={amountData} /> : <Start setAmountData={this.setAmountData} /> ;
+
         return (
             <div className="wrapper">
-                <Table />
+                {content}
             </div>
         );
     }   

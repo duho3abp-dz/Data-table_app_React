@@ -7,6 +7,8 @@ export default class List extends Component {
         active: false
     }
 
+    // --------------------LOGIC-------------------- //
+
     openClosePop = () => {
         const {addressHeight} = this.state;
         if (!addressHeight) {
@@ -21,6 +23,8 @@ export default class List extends Component {
             });
         }
     };
+
+    // --------------------RENDER-------------------- //
 
     render() {
         const { id, firstName, lastName, email, phone , description} = this.props.data;

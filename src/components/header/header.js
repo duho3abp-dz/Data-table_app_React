@@ -18,9 +18,13 @@ export default class Header extends Component {
         viewPhone: false
     }
 
+    // --------------------LOGIC-------------------- //
+
     changeArrowDirection = (block) => {
         return block ? {transform: 'translateY(-50%) rotate(-90deg)'} : {transform: 'translateY(-50%) rotate(90deg)'} ;
     }
+
+    // --------------------RENDER-------------------- //
 
     render() {
         const {viewId, viewFirst, viewLast, viewEmail, viewPhone} = this.state;
