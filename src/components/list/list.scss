@@ -3,7 +3,6 @@
         width: 100%;
         display: flex;
         justify-content: center;
-        cursor: pointer;
         &-hover:hover div {
             background: rgb(216, 215, 215);
         }
@@ -17,9 +16,10 @@
         align-items: center;
         overflow: hidden;
         font-size: 16px;
+        cursor: pointer;
     }
     &__active div {
-        background: rgb(182, 181, 181);
+        background: rgb(216, 216, 216);
     }
 }
 .address {
@@ -27,6 +27,7 @@
     justify-content: center;
     overflow: hidden;
     font-size: 18px;
+    transition: .1s;
     &__block {
         display: flex;
         flex-direction: column;

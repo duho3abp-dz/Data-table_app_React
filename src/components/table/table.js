@@ -7,6 +7,7 @@ import Spinner from '../spinner';
 import Error from '../error';
 import Search from '../search';
 import Slider from '../slider';
+import Form from '../form';
 
 import './table.scss';
 
@@ -21,6 +22,7 @@ export default class Table extends Component {
         error: false,
         stringsTarget: 49,
         term: '',
+        formOpen: false,
 
         sortId: true,
         sortFirst: true,
@@ -34,22 +36,25 @@ export default class Table extends Component {
     componentDidMount() {
         const {getResource} = this.Sevice;
 
-        getResource(1)
+        getResource()
             .then(data => {
-                this.setData(data);
+                this.setState({data,
+                    formOpen: true
+                });
                 this.setAllPages(data);
             })
             .catch(() => this.setState({error: true}))
             .finally(() => this.setState({loading: false}));
     }
 
-    setData = (data) => {
-        const newData = data.map(obj => {
-            obj.id = obj.id + '';
-            return obj;
-        })
-        this.setState({data: newData});
-    };
+    // *** Form *** //
+    addNewContact = (contact) => {
+        console.log(contact);
+        this.setState({data: [
+            contact,
+            ...this.state.data
+        ]});
+    }
 
     // *** Sorting *** //
     sortingObjects = (column, sort) => {
@@ -75,13 +80,7 @@ export default class Table extends Component {
     };
 
     columnSorting = (column) => {
-        const {
-            sortId, 
-            sortFirst,
-            sortLast,
-            sortEmail,
-            sortPhone
-        } = this.state;
+        const {sortId, sortFirst, sortLast, sortEmail, sortPhone} = this.state;
 
         switch (column) {
             case 'id':
@@ -118,20 +117,26 @@ export default class Table extends Component {
         if (term.length !== 0) {
             const filterArr = data.filter(obj => {
                 let ok = false;
+
                 for (let key in obj) {
+                    const corrKey = obj[key] + '';
                     if (key !== 'address' && key !== 'description') {
-                        if (obj[key].indexOf(term) > -1) {
+                        if (corrKey.indexOf(term) > -1) {
                             ok = true;
                         }
                     }
                 }
+                
                 if (ok) {
                     return obj;
                 } else {
                     return null;
                 }
             });
-            this.setState({filter: filterArr});
+            this.setState({
+                filter: filterArr,
+                term: ''
+            });
             this.setAllPages(filterArr);
         } else {
             this.setState({filter: ''});
@@ -208,7 +213,7 @@ export default class Table extends Component {
     };
 
     render() {
-        const {data, filter, loading, error, page, totalPages, term} = this.state;
+        const {data, filter, loading, error, page, totalPages, term, formOpen} = this.state;
 
         const content = error ? <Error /> : loading ? <Spinner/> : this.listRender(this.splittingDataIntoPages(data, page, filter));
         const numPage = page < 9 ? `0${page + 1}` : page + 1 ;
@@ -221,6 +226,7 @@ export default class Table extends Component {
                 term={term}
             />
             <div className="container">
+                <Form addNewContact={this.addNewContact} formOpen={formOpen} />
                 <Header information={this.state} columnSorting={this.columnSorting} />
                 {content}
             </div>
