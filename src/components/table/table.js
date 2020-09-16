@@ -9,6 +9,7 @@ import Search from '../search';
 import Slider from '../slider';
 import Form from '../form';
 
+import svg from './menu.svg'
 import './table.scss';
 
 export default class Table extends Component {
@@ -50,7 +51,6 @@ export default class Table extends Component {
 
     // *** Form *** //
     addNewContact = (contact) => {
-        console.log(contact);
         this.setState({data: [
             contact,
             ...this.state.data
@@ -135,8 +135,7 @@ export default class Table extends Component {
                 }
             });
             this.setState({
-                filter: filterArr,
-                term: ''
+                filter: filterArr
             });
             this.setAllPages(filterArr);
         } else {
@@ -226,6 +225,9 @@ export default class Table extends Component {
                 <Form addNewContact={ this.addNewContact } formOpen={ formOpen } />
                 <Header information={ this.state } columnSorting={ this.columnSorting } />
                 { content }
+            </div>
+            <div onClick={this.props.openMenu} className="fixed__menu">
+                <img src={svg} alt="menu"></img>
             </div>
             <Search 
                 changeTerm={ this.changeSearchTermState } 

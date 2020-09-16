@@ -24,6 +24,19 @@
         width: 70%;
         border: solid #000000 1px;
         background: rgb(245, 244, 244);
+        &-column {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        &-row {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
         & span {
             font-weight: 600;
         }
@@ -34,7 +47,8 @@
             outline: none;
         }
         & input {
-            width: 30%;
+            width: 90%;
+            color: #000000;
             height: 25px;
             margin-bottom: 10px;
             text-align: center;

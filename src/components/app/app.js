@@ -10,6 +10,10 @@ export default class App extends Component {
         openApp: false
     }
 
+    openMenu = () => {
+        this.setState({openApp: false});
+    }
+
     setAmountData = (select) => {
         this.setState({
             amountData: select,
@@ -20,7 +24,9 @@ export default class App extends Component {
     render() {
         const {amountData, openApp} = this.state;
 
-        const content = openApp ? <Table  amountData={amountData} /> : <Start setAmountData={this.setAmountData} /> ;
+        const content = openApp ? 
+        <Table openMenu={this.openMenu} amountData={amountData} /> : 
+        <Start setAmountData={this.setAmountData} /> ;
 
         return (
             <div className="wrapper">
