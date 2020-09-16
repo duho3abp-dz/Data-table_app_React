@@ -24,6 +24,17 @@ export default class Header extends Component {
         return block ? {transform: 'translateY(-50%) rotate(-90deg)'} : {transform: 'translateY(-50%) rotate(90deg)'} ;
     }
 
+    toggleViewArrow = (x, a, b, c, d, e) => {
+        this.props.columnSorting(x);
+        this.setState({
+            [a]: true,
+            [b]: false,
+            [c]: false,
+            [d]: false,
+            [e]: false
+        });
+    }
+
     // --------------------RENDER-------------------- //
 
     render() {
@@ -36,16 +47,7 @@ export default class Header extends Component {
 
                 <div 
                     className="table__list table__header"
-                    onClick={() => {
-                        this.props.columnSorting(id);
-                        this.setState({
-                            viewId: true,
-                            viewFirst: false,
-                            viewLast: false,
-                            viewEmail: false,
-                            viewPhone: false
-                        });
-                    }} 
+                    onClick={() => this.toggleViewArrow(id, 'viewId', 'viewFirst', 'viewLast', 'viewEmail', 'viewPhone')}
                     >
                     { id }
                     <div className="header__id" style={viewId ? this.changeArrowDirection(sortId) : null}>
@@ -55,16 +57,7 @@ export default class Header extends Component {
 
                 <div 
                     className="table__list table__header"
-                    onClick={() => {
-                        this.props.columnSorting(firstName);
-                        this.setState({
-                            viewId: false,
-                            viewFirst: true,
-                            viewLast: false,
-                            viewEmail: false,
-                            viewPhone: false
-                        });
-                    }} 
+                    onClick={() => this.toggleViewArrow(firstName, 'viewFirst', 'viewId', 'viewLast', 'viewEmail', 'viewPhone')}
                     >
                     { firstName }
                     <div className="header__first" style={viewFirst ? this.changeArrowDirection(sortFirst) : null}>
@@ -74,16 +67,7 @@ export default class Header extends Component {
 
                 <div 
                     className="table__list table__header"
-                    onClick={() => {
-                        this.props.columnSorting(lastName);
-                        this.setState({
-                            viewId: false,
-                            viewFirst: false,
-                            viewLast: true,
-                            viewEmail: false,
-                            viewPhone: false
-                        });
-                    }} 
+                    onClick={() => this.toggleViewArrow(lastName, 'viewLast', 'viewFirst', 'viewId', 'viewEmail', 'viewPhone')}
                     >
                     { lastName }
                     <div className="header__last" style={viewLast ? this.changeArrowDirection(sortLast) : null}>
@@ -93,16 +77,7 @@ export default class Header extends Component {
 
                 <div 
                     className="table__list table__header"
-                    onClick={() => {
-                        this.props.columnSorting(email);
-                        this.setState({
-                            viewId: false,
-                            viewFirst: false,
-                            viewLast: false,
-                            viewEmail: true,
-                            viewPhone: false
-                        });
-                    }} 
+                    onClick={() => this.toggleViewArrow(email, 'viewEmail', 'viewLast', 'viewFirst', 'viewId', 'viewPhone')}
                     >
                     { email }
                     <div className="header__email" style={viewEmail ? this.changeArrowDirection(sortEmail) : null}>
@@ -112,16 +87,7 @@ export default class Header extends Component {
 
                 <div 
                     className="table__list table__header"
-                    onClick={() => {
-                        this.props.columnSorting(phone);
-                        this.setState({
-                            viewId: false,
-                            viewFirst: false,
-                            viewLast: false,
-                            viewEmail: false,
-                            viewPhone: true
-                        });
-                    }} 
+                    onClick={() => this.toggleViewArrow(phone, 'viewPhone', 'viewEmail', 'viewLast', 'viewFirst', 'viewId')}
                     >
                     { phone }
                     <div className="header__phone" style={viewPhone ? this.changeArrowDirection(sortPhone) : null}>

@@ -10,6 +10,8 @@ export default class App extends Component {
         openApp: false
     }
 
+    // --------------------LOGIC-------------------- //
+
     openMenu = () => {
         this.setState({openApp: false});
     }
@@ -20,6 +22,8 @@ export default class App extends Component {
             openApp: true
         });
     }
+
+    // --------------------RENDER-------------------- //
 
     render() {
         const {amountData, openApp} = this.state;

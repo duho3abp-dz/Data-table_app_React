@@ -8,6 +8,8 @@ export default class Start extends Component {
         smallData: 32
     }
 
+    // --------------------LOGIC-------------------- //
+
     selectDataset = ({target}) => {
         const {largeData, smallData} = this.state;
         const {setAmountData} = this.props;
@@ -25,6 +27,8 @@ export default class Start extends Component {
         }
     };
 
+    // --------------------RENDER-------------------- //
+    
     render() {
         return (
             <div className="start">
