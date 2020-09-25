@@ -16,15 +16,15 @@ export default class Table extends Component {
     Sevice = new Servise();
     state = {
         data: [],
-        filter: [],
-        page: 0,
-        totalPages: 0,
-        loading: true,
         error: false,
-        stringsTarget: 49,
-        term: '',
+        filter: [],
         formOpen: false,
-
+        loading: true,
+        nonResult: false,
+        page: 0,
+        term: '',
+        totalPages: 0,
+        stringsTarget: 49,
         sortId: true,
         sortFirst: true,
         sortLast: true,
@@ -111,37 +111,65 @@ export default class Table extends Component {
     };
 
     // *** Search *** //
-    changeSearchTermState = (e) => this.setState({term: e.target.value});
-
-    searchTerm = () => {
-        const {data, term} = this.state;
-        if (term.length !== 0) {
-            const filterArr = data.filter(obj => {
-                let ok = false;
-
-                for (let key in obj) {
-                    const corrKey = obj[key] + '';
-                    if (key !== 'address' && key !== 'description') {
-                        if (corrKey.indexOf(term) > -1) {
-                            ok = true;
-                        }
-                    }
+    filterData = (data, term) => data.filter(obj => {
+        let ok = false;
+        
+        for (let key in obj) {
+            const corrKey = (obj[key] + '').toUpperCase();
+            if (key !== 'address' && key !== 'description') {
+                if (corrKey.indexOf(term.toUpperCase()) > -1) {
+                    ok = true;
                 }
-                
-                if (ok) {
-                    return obj;
-                } else {
-                    return null;
-                }
-            });
-            this.setState({
-                filter: filterArr
-            });
-            this.setAllPages(filterArr);
-        } else {
-            this.setState({filter: ''});
-            this.setAllPages(data);
+            }
         }
+        
+        if (ok) {
+            return obj;
+        } else {
+            return null;
+        }
+    });
+
+    resetFilterAndPages = () => {
+        this.setState({filter: ''});
+        this.setAllPages(this.state.data);    
+    };
+
+    testAndSearch = () => {
+        const {data, term} = this.state;
+
+        if (term.length !== 0) {
+            const newArr = this.filterData(data, term);
+
+            if (newArr.length !== 0) {
+                this.setState({filter: this.filterData(data, term)});
+                this.setAllPages(this.filterData(data, term));
+                this.setState({nonResult: false});
+            } else { 
+                this.setState({
+                    nonResult: true,
+                    term: ''
+                });
+                this.resetFilterAndPages();
+                setTimeout(() => this.setState({nonResult: false}), 2000);
+            }
+        } else { 
+            this.setState({nonResult: false});
+            this.resetFilterAndPages(); 
+        }
+    };
+
+    changeSearchTermState = async (e) => {
+        await this.setState({
+            page: 0,
+            term: e.target.value
+        });
+        this.testAndSearch();
+    };
+
+    searchTerm = (e) => {
+        e.preventDefault();
+        this.testAndSearch();
     };
 
     // *** Slider *** //
@@ -207,13 +235,15 @@ export default class Table extends Component {
     // --------------------RENDER-------------------- //
 
     listRender = (arr) => {
-        return arr.map((obj, i) => {
-            return <List key={i} data={obj} />;
-        });
+        if (arr) {
+            return arr.map((obj, i) => {
+                return <List key={i} data={obj} />;
+            });
+        }
     };
 
     renderApp = () => {
-        const {data, filter, loading, error, page, totalPages, term, formOpen} = this.state;
+        const {data, filter, loading, error, page, totalPages, term, formOpen, nonResult} = this.state;
 
         const content = error ? <Error /> : loading ? <Spinner/> : this.listRender(this.splittingDataIntoPages(data, page, filter));
         const numPage = page < 9 ? `0${page + 1}` : page + 1 ;
@@ -230,6 +260,7 @@ export default class Table extends Component {
                 <img src={svg} alt="menu"></img>
             </div>
             <Search 
+                nonResult={ nonResult }
                 changeTerm={ this.changeSearchTermState } 
                 searchTerm={ this.searchTerm }
                 term={ term }
